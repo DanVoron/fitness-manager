@@ -107,7 +107,7 @@ export default function LoginPage() {
 			>
 				<div className="text-center mb-8">
 					<h1 className="text-3xl font-bold mb-2" style={{ color: '#202439' }}>
-						Добро пожаловать в DDX Training
+						Добро пожаловать в <br/> Orange Fitness
 					</h1>
 					<p className="text-gray-600" style={{ color: '#275C73' }}>
 						Введите свои данные для входа в систему

@@ -43,7 +43,7 @@ export default function Header() {
 						<div className="flex items-center">
 							<Dumbbell className="h-6 w-6 mr-2 text-orange-600" />
 							<h1 className="text-xl font-bold text-gray-900 hidden sm:block">
-								DDX Training
+								Orange Fitness
 							</h1>
 						</div>
 					</div>

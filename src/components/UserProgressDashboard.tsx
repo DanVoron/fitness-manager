@@ -103,6 +103,9 @@ const UserProgressDashboard = () => {
 	const [sessionDate, setSessionDate] = useState('');
 	const [sessionTime, setSessionTime] = useState('');
 
+	const [minDate, setMinDate] = useState('');
+	const [minTime, setMinTime] = useState('');
+
 	// Заголовки для запросов
 	const headers = {
 		Authorization: `Bearer ${token}`
@@ -202,6 +205,12 @@ const UserProgressDashboard = () => {
 		}
 	}, [selectedUser]);
 
+	useEffect(() => {
+		if (sessionDate === minDate && sessionTime && sessionTime < minTime) {
+			setSessionTime(minTime);
+		}
+	}, [sessionDate, sessionTime, minDate, minTime]);
+
 	// Фильтрация пользователей
 	const filteredUsers = users.filter(user => {
 		const searchLower = searchTerm.toLowerCase();
@@ -275,6 +284,27 @@ const UserProgressDashboard = () => {
 			alert('Не удалось назначить тренировки');
 		}
 	};
+
+	useEffect(() => {
+		if (assignSessionModal) {
+			const now = new Date();
+
+			// Минимальная дата (сегодня)
+			const year = now.getFullYear();
+			const month = String(now.getMonth() + 1).padStart(2, '0');
+			const day = String(now.getDate()).padStart(2, '0');
+			setMinDate(`${year}-${month}-${day}`);
+
+			// Минимальное время (текущее время + 1 минута)
+			const hours = String(now.getHours()).padStart(2, '0');
+			const minutes = String(now.getMinutes() + 1).padStart(2, '0');
+			setMinTime(`${hours}:${minutes}`);
+
+			// Установите значения по умолчанию
+			if (!sessionDate) setSessionDate(`${year}-${month}-${day}`);
+			if (!sessionTime) setMinTime(`${hours}:${minutes}`);
+		}
+	}, [assignSessionModal]);
 
 	// Удаление назначения
 	const handleRemoveAssignment = async (assignmentId: number) => {
@@ -506,7 +536,7 @@ const UserProgressDashboard = () => {
 
 			{/* Модальное окно назначения тренировки */}
 			{assignSessionModal && selectedUser && (
-				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+				<div className="fixed inset-0 bg-[#00000099] bg-opacity-50 flex items-center justify-center z-50 ">
 					<Card className="w-full max-w-2xl">
 						<CardHeader>
 							<CardTitle>
@@ -577,6 +607,7 @@ const UserProgressDashboard = () => {
 											type="date"
 											value={sessionDate}
 											onChange={(e) => setSessionDate(e.target.value)}
+											min={minDate}  // Добавлено ограничение
 											required
 										/>
 									</div>
@@ -587,6 +618,7 @@ const UserProgressDashboard = () => {
 											type="time"
 											value={sessionTime}
 											onChange={(e) => setSessionTime(e.target.value)}
+											min={sessionDate === minDate ? minTime : undefined} // Ограничение для сегодня
 											required
 										/>
 									</div>
